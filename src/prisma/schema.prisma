@@ -16,4 +16,5 @@ model Quiz {
   title       String   @unique
   questionIds String[]
   createdAt   DateTime @default(now())
+  playedAt    DateTime @default(now())
 }

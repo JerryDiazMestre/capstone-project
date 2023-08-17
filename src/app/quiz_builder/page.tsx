@@ -4,9 +4,56 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Header from '../components/Header'
 import QuestionBankList from '../components/QuestionBankList';
 import Button from '@mui/material/Button';
-import useSWR, { Key, SWRConfig } from 'swr';
+import {useForm} from 'react-hook-form';
 
+type FormValues = {
+    quizName: string;
+    questionsBank: string;
+  };
+  
 export default function Page() {
+    const  saveQuiz = async (title:string, questionIds:string) => {
+        let questionIdsArray = questionIds.split(',');
+        const newQuiz = 
+            await fetch('/api/quizzes', {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: {
+                        "Content-Type":"application/json"
+                    },
+                    body: JSON.stringify(
+                        {
+                            title: title,
+                            questionIds: questionIdsArray
+                        }
+                    )
+                    }
+            )
+            .then((res) => {
+                if (res.ok){
+                    console.log(res);
+                    window.location.replace('/');
+                }
+            })
+            .catch((error) => console.log(error));
+    }
+
+    const {
+        register,
+        handleSubmit,
+        getValues,
+        formState: { errors },
+    } = useForm<FormValues>();
+
+    const onSubmit = handleSubmit((data) => {
+        let title = document.getElementById('quizName').value;
+        let questionIds = document.getElementById('questionsBank').value;
+        // let title = getValues('quizName');
+        // let questionIds = getValues('questionsBank');
+        const res = saveQuiz(title, questionIds);
+        console.log({title:title, questionIds:questionIds, res:res});
+    })
+      
     const [questionsAvailables, setQuestionsAvailables] = useState([]);
 
     const fetcher =  async (query: string) => {
@@ -74,13 +121,13 @@ export default function Page() {
         let text = e.target.parentNode.children[0].innerText ?? '';
         if (id !== '' && text !== ''){
             setQuestionList([...questionList, {id:id, text:text}]);
-            let questionBankList = document.getElementById("questionBank").value;
+            let questionBankList = document.getElementById("questionsBank").value;
             if (questionBankList == ''){
                 questionBankList = id;
             } else {
                 questionBankList += ',' + id;
             }
-            document.getElementById('questionBank').value = questionBankList;
+            document.getElementById('questionsBank').value = questionBankList;
             console.log(questionBankList);
             let removeIndex = null;
             for (let index = 0; index < questionsAvailables.length; index++) {
@@ -98,7 +145,7 @@ export default function Page() {
         <div>
             <Header />
             <div className='container'>
-                <form>
+                <form onSubmit={onSubmit}>
                     <div className="d-flex justify-content-around mt-5">
                         <div>
                             <h1  className="">
@@ -109,8 +156,8 @@ export default function Page() {
                             <label className='display-6 text-muted' htmlFor="quizName">
                                 NAME:
                             </label>
-                            <input className='i' type="text" name="quizName" />
-                            <input type="hidden" name="questionBank" id="questionBank"/>
+                            <input className='i' id="quizName" type="text" {...register('quizName')}/>
+                            <input type="hidden" id="questionsBank" {...register('questionsBank')} />
                         </div>
                     </div>
                     <hr style={{borderBottom:"#000 solid 3px"}} />
@@ -119,7 +166,7 @@ export default function Page() {
                             <div>
                                 <h4>QUESTION BANK:</h4>
                             </div>
-                            <div style={{height:"40vh", overflow:"auto"}}>
+                            <div style={{height:"25vh", overflow:"auto"}}>
                                 <QuestionBankList questions={questionList}/>
                             </div>
                             <hr style={{borderBottom:"#000 solid 3px", marginTop:"4rem"}} />
@@ -157,7 +204,7 @@ export default function Page() {
                                 </div>
                             </div>
 
-                            <div style={{height:"40vh", overflow:"auto"}}>
+                            <div style={{height:"25vh", overflow:"auto"}}>
                                 <div className='list-group'>
                                 {questionsAvailables.map((item, index) => {
                                         return <div className='list-group-item d-flex justify-content-between' key={item.id} id={item.id}>
