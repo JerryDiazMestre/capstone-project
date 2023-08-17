@@ -11,15 +11,28 @@ type Quiz = {
     // playedAt: string
 }
 
-async function getQuiz(id: number): Promise<Quiz> {
-    const res = await fetch(
-      `/api/quizzes/${id}`);
-    return res.json();
-}
-  
-export default async function page({params}: Props) {
-    const quiz = await getQuiz(params.id)
 
+const fetcher = async () =>{
+    let url = '/api/quizzes';
+    const res = 
+        await fetch(url)
+            .then((res) => res.json())
+            .then((json) => setQuizList(json))
+}
+
+export default async function page({params}: Props) {
+    const [quiz, setQuiz] = useState([]);
+    
+    const getQuiz = async () => (id: number): Promise<Quiz> {
+        const url = `/api/quizzes/${id}`;
+        console.log(url);
+        const res = 
+            await fetch(url)
+                .then((res) => res.json())
+                .then((json) => setQuiz(json))
+    }
+      
+    
     return (
         <div>page</div>
     )
