@@ -1,39 +1,31 @@
 'use client';
+import 'bootstrap/dist/css/bootstrap.css';
 import React, {useState} from 'react'
+import {getQuiz} from '../../api/fetcher';
+import useSWR from "swr";
+import { Quiz } from '@/app/model/Quiz';
+
 type Props = {
     params: { id: number } 
 }
 
-type Quiz = {
-    id: number,
-    title: string,
-    questions: string[],
-    createdAT: string,
-    // playedAt: string
-}
-
 
 export default function page({params}: Props) {
-    const [quiz, setQuiz] = useState([]);
+    let questions = [];
+    const { data, error, isLoading } = useSWR(`quizzes/${params.id}`, getQuiz);
+    let quiz = data;
 
-    const getQuiz = async (id: number) => {
-        let url = `/api/quizzes/${id}`;
-        const res = 
-            await fetch(url)
-                .then((res) => res.json())
-                .then((json) => setQuiz(json));
-
-    console.log(quiz);
+    console.log({quiz:quiz, questions:quiz?.questionIds});
+    if (quiz && quiz?.questionIds && quiz?.questionIds?.length){
+        quiz?.questionIds.map((item:string, index:number) =>{
+            const { data } = useSWR(`${item}`);
+            questions.push(data);
+        });
     }
-
-    if (quiz.length < 1){
-        getQuiz(params.id);
-    }
-    console.log(quiz);
-
-      
-    
     return (
-        <div>HElp me!</div>
+        <>
+            <h1>{quiz?.title}</h1>   
+            <h5>{quiz?.questionIds}</h5>
+        </>
     )
 }
