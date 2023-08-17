@@ -1,7 +1,7 @@
 'use client';
 import 'bootstrap/dist/css/bootstrap.css';
 import React, {useState} from 'react'
-import {getQuiz} from '../../api/fetcher';
+import {getQuestion, getQuiz} from '../../api/fetcher';
 import useSWR from "swr";
 import { Quiz } from '@/app/model/Quiz';
 
@@ -18,7 +18,7 @@ export default function page({params}: Props) {
     console.log({quiz:quiz, questions:quiz?.questionIds});
     if (quiz && quiz?.questionIds && quiz?.questionIds?.length){
         quiz?.questionIds.map((item:string, index:number) =>{
-            const { data } = useSWR(`${item}`);
+            const { data, error } = useSWR(`${item}`, getQuestion);
             questions.push(data);
         });
     }
