@@ -119,7 +119,7 @@ export default function Page() {
                             <div>
                                 <h4>QUESTION BANK:</h4>
                             </div>
-                            <div>
+                            <div style={{height:"40vh", overflow:"auto"}}>
                                 <QuestionBankList questions={questionList}/>
                             </div>
                             <hr style={{borderBottom:"#000 solid 3px", marginTop:"4rem"}} />
@@ -157,7 +157,7 @@ export default function Page() {
                                 </div>
                             </div>
 
-                            <div style={{height:"50vh", overflow:"auto"}}>
+                            <div style={{height:"40vh", overflow:"auto"}}>
                                 <div className='list-group'>
                                 {questionsAvailables.map((item, index) => {
                                         return <div className='list-group-item d-flex justify-content-between' key={item.id} id={item.id}>
