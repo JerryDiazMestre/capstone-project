@@ -1,9 +1,21 @@
 'use client';
 import { Button } from '@mui/material';
 import React, {useState} from 'react'
+import { useRouter } from "next/navigation";
 
 export default function Quizzes() {
     const [quizList, setQuizList] = useState([]);
+
+    const router = useRouter();
+    const goToQuizBuilder = () => {
+        const path = '/quizzes/';
+        router.push(path);
+    }
+    const Play = (id) => {
+        const path = `/quizzes/${id}`;
+        console.log(path);
+        router.push(path);
+    }
 
     const fetcher = async () =>{
         let url = '/api/quizzes';
@@ -31,7 +43,7 @@ export default function Quizzes() {
                                 </div>
                                 <div className='row row-cols-2 p-2'>
                                     <div className='col ms-3 fw-bold text-muted' style={{border:"solid 2px #DDD", borderRadius:"18px", width:"fit-content", paddingTop:"5px"}}>{item.questionIds.length} QUESTIONS</div>
-                                    <Button sx={{margin:"auto", width:"fit-content", borderRadius:"18px"}} variant='contained'>PLAY {item.id}</Button>
+                                    <Button onClick={(e) => {Play(e.target.id)}} sx={{margin:"auto", width:"fit-content", borderRadius:"18px"}} variant='contained' id={item.id}> PLAY </Button>
                                 </div>
                             </div>
                         </div>
