@@ -1,4 +1,5 @@
-import React from 'react'
+'use client';
+import React, {useState} from 'react'
 type Props = {
     params: { id: number } 
 }
@@ -12,28 +13,27 @@ type Quiz = {
 }
 
 
-const fetcher = async () =>{
-    let url = '/api/quizzes';
-    const res = 
-        await fetch(url)
-            .then((res) => res.json())
-            .then((json) => setQuizList(json))
-}
-
-export default async function page({params}: Props) {
+export default function page({params}: Props) {
     const [quiz, setQuiz] = useState([]);
-    
-    const getQuiz = async () => (id: number): Promise<Quiz> {
-        const url = `/api/quizzes/${id}`;
-        console.log(url);
+
+    const getQuiz = async (id: number) => {
+        let url = `/api/quizzes/${id}`;
         const res = 
             await fetch(url)
                 .then((res) => res.json())
-                .then((json) => setQuiz(json))
+                .then((json) => setQuiz(json));
+
+    console.log(quiz);
     }
+
+    if (quiz.length < 1){
+        getQuiz(params.id);
+    }
+    console.log(quiz);
+
       
     
     return (
-        <div>page</div>
+        <div>HElp me!</div>
     )
 }

@@ -11,9 +11,8 @@ export default function Quizzes() {
         const path = '/quizzes/';
         router.push(path);
     }
-    const Play = (id) => {
+    const Play = (id:number) => {
         const path = `/quizzes/${id}`;
-        console.log(path);
         router.push(path);
     }
 
